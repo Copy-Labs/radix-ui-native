@@ -1,6 +1,7 @@
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
+  AlertDialog, Button,
   Checkbox,
   Flex,
   Select,
@@ -17,6 +18,7 @@ export default function App() {
   const [textValue, setTextValue] = useState<string>('text example text');
   const [sliderValue, setSliderValue] = useState<number>(3);
   const [checked, setChecked] = useState<boolean>(false);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   return (
     <ScrollView style={{ flex: 1 }}>
@@ -37,6 +39,9 @@ export default function App() {
           </Text>
         </Flex>
         <Flex direction={'column'} gap={16} paddingHorizontal={8}>
+          <Link href={'/avatars'}>
+            <Text size={4}>Avatars</Text>
+          </Link>
           <Link href={'/buttons'}>
             <Text size={4}>Buttons</Text>
           </Link>
@@ -85,6 +90,21 @@ export default function App() {
       >
         <SafeAreaView style={{ flex: 1, gap: 16 }}>
           <Flex direction={'column'} gap={16} paddingVertical={4} backgroundColor="gray.2">
+            <AlertDialog.Root open={isOpen} onOpenChange={(open: boolean) => setIsOpen(open)}>
+              <AlertDialog.Trigger>
+                <Button variant={'soft'}>Show Alert</Button>
+              </AlertDialog.Trigger>
+              <AlertDialog.Portal>
+                <AlertDialog.Overlay />
+                <AlertDialog.Content>
+                  <AlertDialog.Title>Confirm Action</AlertDialog.Title>
+                  <AlertDialog.Description>Are you sure?</AlertDialog.Description>
+                  <AlertDialog.Action>Confirm</AlertDialog.Action>
+                  <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+                </AlertDialog.Content>
+              </AlertDialog.Portal>
+            </AlertDialog.Root>
+
             <Checkbox
               checked={checked}
               size={'3'}
