@@ -18,7 +18,7 @@ export interface AvatarProps {
    * Avatar size
    * @default 2
    */
-  size?: 1 | 2 | 3 | 4 | 5;
+  size?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   /**
    * Fallback content when image fails to load
    */
@@ -73,17 +73,25 @@ const Avatar = React.forwardRef<unknown, React.PropsWithChildren<AvatarProps>>(
     const getSizeValues = () => {
       switch (size) {
         case 1:
-          return { size: 24, fontSize: 10, borderWidth: 2 };
+          return { size: 24, fontSize: 10, borderWidth: 1 };
         case 2:
-          return { size: 32, fontSize: 12, borderWidth: 2 };
+          return { size: 32, fontSize: 12, borderWidth: 1 };
         case 3:
-          return { size: 48, fontSize: 18, borderWidth: 3 };
+          return { size: 48, fontSize: 18, borderWidth: 1 };
         case 4:
-          return { size: 64, fontSize: 24, borderWidth: 4 };
+          return { size: 64, fontSize: 24, borderWidth: 1 };
         case 5:
-          return { size: 80, fontSize: 32, borderWidth: 4 };
+          return { size: 80, fontSize: 32, borderWidth: 1 };
+        case 6:
+          return { size: 96, fontSize: 48, borderWidth: 1 };
+        case 7:
+          return { size: 128, fontSize: 60, borderWidth: 1 };
+        case 8:
+          return { size: 144, fontSize: 72, borderWidth: 1 };
+        case 9:
+          return { size: 160, fontSize: 88, borderWidth: 1 };
         default:
-          return { size: 32, fontSize: 12, borderWidth: 2 };
+          return { size: 32, fontSize: 12, borderWidth: 1 };
       }
     };
 

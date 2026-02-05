@@ -113,9 +113,9 @@ const Heading = React.memo(
 
       const textStyle: TextStyle = useMemo(
         () => ({
-          fontSize: fontSizeSpec.fontSize,
-          lineHeight: fontSizeSpec.lineHeight,
-          letterSpacing: fontSizeSpec.letterSpacing,
+          fontSize: fontSizes.fontSize,
+          lineHeight: fontSizes.lineHeight,
+          letterSpacing: fontSizes.letterSpacing,
           fontFamily: fontFamily || headingFont.fontFamily,
           fontWeight: fontWeights[weight] || headingFont.fontWeight,
           fontStyle: headingFont.fontStyle,
@@ -123,7 +123,7 @@ const Heading = React.memo(
           color: color || colors[12],
           opacity,
         }),
-        [fontSizeSpec, fontFamily, headingFont, fontWeights, weight, align, color, opacity, colors]
+        [fontSizes, fontFamily, headingFont, fontWeights, weight, align, color, opacity, colors]
       );
 
       const Comp = asChild ? Slot : Text;
