@@ -20,7 +20,7 @@ interface HeadingProps {
    * Heading size (1-5)
    * @default 4
    */
-  size?: 1 | 2 | 3 | 4 | 5;
+  size?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
   /**
    * Font weight
    * @default 'bold'
