@@ -39,46 +39,46 @@ export default function App() {
           </Text>
         </Flex>
         <Flex direction={'column'} gap={16} paddingHorizontal={8}>
-          <Link href={'/avatars'}>
+          <Link href={'/demo/avatars'}>
             <Text size={4}>Avatars</Text>
           </Link>
-          <Link href={'/buttons'}>
+          <Link href={'/demo/buttons'}>
             <Text size={4}>Buttons</Text>
           </Link>
-          <Link href={'/badge'}>
+          <Link href={'/demo/badge'}>
             <Text size={4}>Badge</Text>
           </Link>
-          <Link href={'/switch'}>
+          <Link href={'/demo/switch'}>
             <Text size={4}>Switch</Text>
           </Link>
-          <Link href={'/card'}>
+          <Link href={'/demo/card'}>
             <Text size={4}>Card</Text>
           </Link>
-          <Link href={'/radio'}>
+          <Link href={'/demo/radio'}>
             <Text size={4}>Radio</Text>
           </Link>
-          <Link href={'/text_fields'}>
+          <Link href={'/demo/text_fields'}>
             <Text size={4}>Text Fields</Text>
           </Link>
-          <Link href={'/textarea'}>
+          <Link href={'/demo/textarea'}>
             <Text size={4}>Text Area</Text>
           </Link>
-          <Link href={'/heading'}>
+          <Link href={'/demo/heading'}>
             <Text size={4}>Heading</Text>
           </Link>
-          <Link href={'/text'}>
+          <Link href={'/demo/text'}>
             <Text size={4}>text</Text>
           </Link>
-          <Link href={'/code'}>
+          <Link href={'/demo/code'}>
             <Text size={4}>code</Text>
           </Link>
-          <Link href={'/em'}>
+          <Link href={'/demo/em'}>
             <Text size={4}>em</Text>
           </Link>
-          <Link href={'/kbd'}>
+          <Link href={'/demo/kbd'}>
             <Text size={4}>kbd</Text>
           </Link>
-          <Link href={'/strong'}>
+          <Link href={'/demo/strong'}>
             <Text size={4}>strong</Text>
           </Link>
         </Flex>
