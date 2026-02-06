@@ -35,7 +35,9 @@ export const RnTouchableOpacity = React.memo(
         <RNTouchableOpacity
           ref={ref}
           style={[
-            { backgroundColor: colors[1] },
+            {
+              // backgroundColor: colors[1]
+            },
             style,
           ]}
           onPressIn={handlePressIn}

@@ -104,7 +104,7 @@ const Grid = React.memo(
           justifyContent: justify,
           columnGap: columnGap ?? gap,
           rowGap: rowGap ?? gap,
-          backgroundColor: isDark ? colors.dark[1] : colors[1],
+          // backgroundColor: isDark ? colors.dark[1] : colors[1],
         }),
         [align, justify, columnGap, gap, rowGap, colors]
       );
