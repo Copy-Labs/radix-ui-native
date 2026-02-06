@@ -26,6 +26,12 @@ export default function Badges() {
             </Badge>
           </Flex>
 
+          <Flex gap={2}>
+            <Badge color="orange">In progress</Badge>
+            <Badge color="blue">In review</Badge>
+            <Badge color="green">Complete</Badge>
+          </Flex>
+
           <Flex direction="column" gap={8}>
             <Flex gap={2}>
               <Badge color="gray" variant="solid">

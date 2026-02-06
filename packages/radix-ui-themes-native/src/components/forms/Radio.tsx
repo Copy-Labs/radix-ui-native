@@ -3,7 +3,7 @@ import { StyleSheet, type ViewStyle, TouchableOpacity as RNTouchableOpacity } fr
 import { TouchableOpacity, View } from '../primitives';
 import { useTheme, useThemeMode } from '../../hooks/useTheme';
 import { Text } from '../../components';
-import { Color, getContrast } from '../../theme';
+import { Color, getContrast, getVariantColors } from '../../theme';
 import {
   getAccentColor,
   getGrayAlpha,
@@ -11,17 +11,21 @@ import {
 
 interface RadioProps {
   /**
+   * Whether the radio is checked by default (uncontrolled mode)
+   */
+  defaultChecked?: boolean;
+  /**
    * Value of this radio button
    */
   value: string;
   /**
    * Currently selected value in the group
    */
-  selected: boolean;
+  selected?: boolean;
   /**
    * Callback when radio is selected
    */
-  onSelect: (value: string) => void;
+  onSelect?: (value: string) => void;
   /**
    * Whether the radio is disabled
    */
@@ -44,6 +48,11 @@ interface RadioProps {
    */
   highContrast?: boolean;
   /**
+   * Badge variant
+   * @default 'soft'
+   */
+  variant?: 'solid' | 'soft' | 'surface' | 'outline';
+  /**
    * Accessibility label
    */
   accessibilityLabel?: string;
@@ -58,11 +67,13 @@ type StyleProp<T> = T | T[];
 const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, RadioProps>(
   (
     {
+      defaultChecked,
       value,
       selected,
       onSelect,
       disabled = false,
       size = '2',
+      variant = 'solid',
       color,
       label,
       highContrast = false,
@@ -82,14 +93,20 @@ const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, Ra
     // const radioContrast = accentScale.contrast;
     const activeColor = color || theme.accentColor;
     const radioContrast = getContrast(theme, activeColor, mode, highContrast);
+    const variantColors = getVariantColors(theme, activeColor, mode, variant, highContrast);
+    // Internal state for uncontrolled mode
+    const [isInternallySelected, setIsInternallySelected] = React.useState(defaultChecked ?? false);
+
+    // Use controlled state if provided, otherwise use internal state
+    const isSelected = selected !== undefined ? selected : isInternallySelected;
 
     // Get size values
     const getSizeValues = () => {
       switch (size) {
         case '1':
           return {
-            boxSize: 16,
-            innerSize: 8,
+            boxSize: 18,
+            innerSize: 6,
             iconSize: 8,
             fontSize: theme.typography.fontSizes[1].fontSize,
             gap: theme.space[1],
@@ -97,7 +114,7 @@ const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, Ra
         case '3':
           return {
             boxSize: 28,
-            innerSize: 16,
+            innerSize: 12,
             iconSize: 16,
             fontSize: theme.typography.fontSizes[3].fontSize,
             gap: theme.space[3],
@@ -106,7 +123,7 @@ const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, Ra
         default:
           return {
             boxSize: 22,
-            innerSize: 12,
+            innerSize: 9,
             iconSize: 12,
             fontSize: theme.typography.fontSizes[2].fontSize,
             gap: theme.space[2],
@@ -118,7 +135,13 @@ const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, Ra
 
     const handlePress = () => {
       if (!disabled) {
-        onSelect(value);
+        if (onSelect) {
+          onSelect(value);
+        }
+        // If uncontrolled, update internal state
+        if (selected === undefined) {
+          setIsInternallySelected(true);
+        }
       }
     };
 
@@ -127,8 +150,8 @@ const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, Ra
       height: sizeValues.boxSize,
       borderRadius: sizeValues.boxSize / 2,
       borderWidth: 2,
-      borderColor: selected ? selectedColor : grayAlpha['8'],
-      backgroundColor: 'transparent',
+      borderColor: isSelected ? variantColors.borderColor : grayAlpha['8'],
+      backgroundColor: isSelected ? variantColors.backgroundColor : 'transparent',
       opacity: disabled ? 0.5 : 1,
       justifyContent: 'center',
       alignItems: 'center',
@@ -138,7 +161,8 @@ const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, Ra
       width: sizeValues.innerSize,
       height: sizeValues.innerSize,
       borderRadius: sizeValues.innerSize / 2,
-      backgroundColor: selected ? selectedColor : 'transparent',
+      // backgroundColor: 'transparent',
+      backgroundColor: variantColors.textColor,
     };
 
     const labelStyle = {
@@ -155,7 +179,7 @@ const Radio = React.forwardRef<React.ComponentRef<typeof RNTouchableOpacity>, Ra
         accessibilityRole="radio"
         accessibilityLabel={accessibilityLabel || label}
         accessibilityHint={accessibilityHint || 'Select option'}
-        accessibilityState={{ checked: selected, disabled }}
+        accessibilityState={{ checked: isSelected, disabled }}
         accessibilityActions={[{ name: 'activate', label: 'Select' }]}
         {...rest}
       >
