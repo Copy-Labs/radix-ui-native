@@ -3,7 +3,8 @@ import { StyleSheet, type StyleProp, ViewStyle } from 'react-native';
 import { View, TouchableOpacity } from '../primitives';
 import { Text } from '../typography';
 import { useTheme, useThemeMode } from '../../hooks/useTheme';
-import { getGrayAlpha } from '../../theme/color-helpers';
+import { getGrayAlpha, getVariantColors } from '../../theme/color-helpers';
+import { Color, RadiusSize } from '../../theme';
 
 interface SegmentedControlOption {
   label: string;
@@ -25,10 +26,20 @@ interface SegmentedControlProps {
    */
   options: SegmentedControlOption[];
   /**
+   * Color scheme for the badge
+   * @default undefined (uses theme's accentColor)
+   */
+  color?: Color;
+  /**
+   * Radius variant mode for accessibility
+   * @default 'medium'
+   */
+  radius?: RadiusSize;
+  /**
    * Segmented control size
    * @default 2
    */
-  size?: 1 | 2 | 3;
+  size?: 1 | 2 | 3 | 4;
   /**
    * Custom style
    */
@@ -37,44 +48,64 @@ interface SegmentedControlProps {
    * Whether the control is disabled
    */
   disabled?: boolean;
+  /**
+   * High contrast mode for accessibility
+   */
+  highContrast?: boolean;
 }
 
 const SegmentedControl = ({
   value,
   onValueChange,
   options,
-  size = 2,
+  color,
+  radius = 'medium',
+  size = 3,
   style,
   disabled = false,
+  highContrast = false,
 }: SegmentedControlProps) => {
   const theme = useTheme();
   const mode = useThemeMode();
   const isDark = mode === 'dark';
   const grayScale = isDark ? theme.colors.gray.dark : theme.colors.gray;
   const grayAlpha = getGrayAlpha(theme);
-  const radii = theme.radii;
+  const activeColor = color || theme.accentColor;
+  // const radii = theme.radii;
+  const radii = theme.radii[radius] ?? theme.radii.medium;
+  const selectedRadius = radius || theme.radius;
+  const solidVariant = 'solid';
+  const softVariant = 'soft';
+  const solidVariantColors = getVariantColors(theme, activeColor, mode, solidVariant, highContrast);
+  const softVariantColors = getVariantColors(theme, activeColor, mode, softVariant, highContrast);
 
   // Get size values
   const getSizeValues = () => {
     switch (size) {
       case 1:
         return {
-          height: 28,
+          height: 32,
           fontSize: theme.typography.fontSizes[1].fontSize,
           paddingHorizontal: theme.space[2],
         };
-      case 3:
-        return {
-          height: 48,
-          fontSize: theme.typography.fontSizes[3].fontSize,
-          paddingHorizontal: theme.space[4],
-        };
       case 2:
-      default:
         return {
           height: 36,
           fontSize: theme.typography.fontSizes[2].fontSize,
           paddingHorizontal: theme.space[3],
+        };
+      case 4:
+        return {
+          height: 56,
+          fontSize: theme.typography.fontSizes[4].fontSize,
+          paddingHorizontal: theme.space[5],
+        };
+      case 3:
+      default:
+        return {
+          height: 44,
+          fontSize: theme.typography.fontSizes[3].fontSize,
+          paddingHorizontal: theme.space[4],
         };
     }
   };
@@ -86,8 +117,8 @@ const SegmentedControl = ({
       style={[
         styles.container,
         {
-          backgroundColor: grayAlpha['3'],
-          borderRadius: radii.medium,
+          backgroundColor: color ? softVariantColors.backgroundColor : grayAlpha['3'],
+          borderRadius: radii,
           height: sizeValues.height,
         },
         style,
@@ -107,15 +138,19 @@ const SegmentedControl = ({
           height: '100%',
           paddingHorizontal: sizeValues.paddingHorizontal,
           backgroundColor: isSelected
-            ? (isDark ? grayAlpha['5'] : grayAlpha['4'])
+            ? (color ? solidVariantColors.backgroundColor : theme.colors.gray['1'])
+            // (isDark ? grayAlpha['5'] : grayAlpha['4'])
             : 'transparent',
-          borderRadius: isFirst
-            ? radii.medium
-            : isLast
-            ? radii.medium
-            : 0,
-          marginLeft: isFirst ? 0 : -radii.medium / 2,
-          marginRight: isLast ? 0 : -radii.medium / 2,
+          borderWidth: isSelected ? 0.5 : 0,
+          borderColor: isSelected ? theme.colors.gray['8'] : 'transparent',
+          // borderRadius: isFirst
+          //   ? radii
+          //   : isLast
+          //   ? radii
+          //   : 0,
+          borderRadius: selectedRadius === 'full' ? 9999 : radii,
+          // marginLeft: isFirst ? 0 : -radii / 2,
+          // marginRight: isLast ? 0 : -radii / 2,
         };
 
         const handlePress = () => {
@@ -138,9 +173,10 @@ const SegmentedControl = ({
             )}
             <Text
               style={{
-                color: isSelected
-                  ? grayScale[12]
-                  : grayAlpha['10'],
+                // color: isSelected
+                //   ? grayScale[12]
+                //   : grayAlpha['10'],
+                color: color ? (isSelected ? solidVariantColors.textColor : softVariantColors.textColor) : (isSelected ? grayScale[12] : grayAlpha[10]),
                 fontWeight: isSelected ? '600' : '400',
                 fontSize: sizeValues.fontSize,
               }}
