@@ -150,11 +150,11 @@ const TextField = React.forwardRef<React.ComponentRef<typeof RNTextInput>, TextF
     const sizeValues = getSizeValues();
 
     const containerStyle: ViewStyle = {
-      gap: theme.space[1],
+      gap: sizeValues.paddingVertical / 2 || theme.space[1],
     };
 
     const labelStyle = {
-      color: variantColors.textColor || isDark ? grayScale[11] : grayScale[10],
+      color: variantColors.textColor || theme.colors.gray['11'], // isDark ? grayScale[11] : grayScale[10],
       fontSize: sizeValues.fontSize,
       fontWeight: '500' as const,
     };
@@ -209,8 +209,8 @@ const TextField = React.forwardRef<React.ComponentRef<typeof RNTextInput>, TextF
       borderColor: inputBorderColor(),
       borderRadius: sizeValues.borderRadius,
       fontSize: sizeValues.fontSize,
-      color: color ? variantColors.textColor : grayScale[12],
-      paddingVertical: sizeValues.paddingVertical,
+      color: color !== 'gray' ? variantColors.textColor : grayScale[12],
+      paddingVertical: sizeValues.paddingVertical / 2,
       paddingHorizontal: sizeValues.paddingHorizontal,
       minHeight: multiline ? sizeValues.height : undefined,
       height: multiline ? undefined : sizeValues.height,
@@ -235,7 +235,7 @@ const TextField = React.forwardRef<React.ComponentRef<typeof RNTextInput>, TextF
             value={value}
             onChangeText={onChangeText}
             placeholder={placeholder}
-            placeholderTextColor={color ? theme.colors[activeColor].alpha['7'] : grayScale[4]}
+            placeholderTextColor={color !== 'gray' ? theme.colors[activeColor].alpha['8'] : theme.colors.gray[9]}
             editable={!disabled}
             secureTextEntry={secureTextEntry}
             keyboardType={keyboardType}
