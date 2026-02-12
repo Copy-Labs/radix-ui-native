@@ -3,7 +3,6 @@ import {
   View,
   StyleSheet,
   Pressable,
-  Animated,
   type StyleProp,
   ViewStyle,
   Dimensions,
@@ -15,6 +14,13 @@ import { useTheme, useThemeMode } from '../../hooks/useTheme';
 import { Text } from '../typography';
 import { getGrayAlpha, getAccentColor } from '../../theme/color-helpers';
 import type { BaseColorScale, ColorScale, RadiusScale } from '../../theme';
+import {
+  useAnchorPosition,
+  calculatePopoverPosition,
+  type AnchorPosition,
+  type PopoverSide,
+  type PopoverAlign,
+} from '../../hooks/useAnchorPosition';
 
 // ============================================================================
 // Popover Context
@@ -28,7 +34,8 @@ interface PopoverContextValue {
   accentColor: string;
   radii: RadiusScale;
   anchorRef: React.RefObject<View | null>;
-  contentRef: React.RefObject<View | null>;
+  anchorPosition: AnchorPosition;
+  measureAnchor: () => void;
 }
 
 const PopoverContext = createContext<PopoverContextValue | null>(null);
@@ -73,11 +80,20 @@ export const PopoverRoot = ({
   const grayAlpha = getGrayAlpha(theme);
   const accentColor = getAccentColor(theme, mode)[9];
   const radii = theme.radii;
-  const anchorRef = useRef<View>(null);
-  const contentRef = useRef<View>(null);
+  const { anchorRef, anchorPosition, measureAnchor } = useAnchorPosition();
 
   return (
-    <PopoverContext.Provider value={{ open, onOpenChange: handleOpenChange, colors, grayAlpha, accentColor, radii, anchorRef, contentRef }}>
+    <PopoverContext.Provider value={{
+      open,
+      onOpenChange: handleOpenChange,
+      colors,
+      grayAlpha,
+      accentColor,
+      radii,
+      anchorRef,
+      anchorPosition,
+      measureAnchor,
+    }}>
       {children}
     </PopoverContext.Provider>
   );
@@ -93,24 +109,29 @@ interface PopoverTriggerProps {
 }
 
 export const PopoverTrigger = ({ children, asChild = true }: PopoverTriggerProps) => {
-  const { onOpenChange, open } = usePopover();
+  const { onOpenChange, open, anchorRef, measureAnchor } = usePopover();
 
   const handlePress = () => {
+    // Measure the anchor position before opening
+    measureAnchor();
     onOpenChange(!open);
   };
 
   if (asChild && React.isValidElement(children)) {
-    return React.cloneElement(children as React.ReactElement<any>, {
-      ref: (usePopover() as any).anchorRef,
+    // Clone the child element and inject our ref and onPress handler
+    const child = children as React.ReactElement<any>;
+    return React.cloneElement(child, {
+      ref: anchorRef,
       onPress: (e: any) => {
-        (children as any).props?.onPress?.(e);
+        // Call the original onPress if it exists
+        child.props?.onPress?.(e);
         handlePress();
       },
     });
   }
 
   return (
-    <Pressable ref={(usePopover() as any).anchorRef} onPress={handlePress}>
+    <Pressable ref={anchorRef} onPress={handlePress}>
       {children}
     </Pressable>
   );
@@ -162,8 +183,7 @@ export const PopoverOverlay = ({ style }: PopoverOverlayProps) => {
 // Popover.Content - The popover content panel
 // ============================================================================
 
-export type PopoverSide = 'top' | 'bottom' | 'left' | 'right';
-export type PopoverAlign = 'start' | 'center' | 'end';
+export type { PopoverSide, PopoverAlign };
 
 interface PopoverContentProps {
   children: ReactNode;
@@ -184,87 +204,78 @@ export const PopoverContent = ({
   avoidCollisions = true,
   style,
 }: PopoverContentProps) => {
-  const { colors, grayAlpha, accentColor, radii, onOpenChange, anchorRef } = usePopover();
+  const { colors, grayAlpha, radii, onOpenChange, anchorPosition } = usePopover();
   const theme = useTheme();
-  const [anchorPosition, setAnchorPosition] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const contentRef = useRef<View>(null);
+  const [contentSize, setContentSize] = useState({ width: 0, height: 0 });
+  const [position, setPosition] = useState<{ top?: number; left?: number }>({});
   const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
 
-  // In React Native, we position the content absolutely based on anchor
-  // For simplicity, we'll use a centered approach with side-based positioning
-
-  const getPositionStyle = (): ViewStyle => {
-    const spacing = sideOffset;
-
-    switch (side) {
-      case 'top':
-        return {
-          position: 'absolute',
-          bottom: screenHeight - anchorPosition.y + spacing,
-          left: anchorPosition.x + (anchorPosition.width / 2) - 100 + alignOffset,
-          width: 200,
-        };
-      case 'bottom':
-        return {
-          position: 'absolute',
-          top: anchorPosition.y + anchorPosition.height + spacing,
-          left: anchorPosition.x + (anchorPosition.width / 2) - 100 + alignOffset,
-          width: 200,
-        };
-      case 'left':
-        return {
-          position: 'absolute',
-          right: screenWidth - anchorPosition.x + spacing,
-          top: anchorPosition.y + (anchorPosition.height / 2) - 50 + alignOffset,
-          width: 200,
-        };
-      case 'right':
-        return {
-          position: 'absolute',
-          left: anchorPosition.x + anchorPosition.width + spacing,
-          top: anchorPosition.y + (anchorPosition.height / 2) - 50 + alignOffset,
-          width: 200,
-        };
-      default:
-        return {
-          position: 'absolute',
-          top: anchorPosition.y + anchorPosition.height + spacing,
-          left: anchorPosition.x + (anchorPosition.width / 2) - 100 + alignOffset,
-          width: 200,
-        };
+  // Calculate position when content size or anchor position changes
+  const updatePosition = useCallback(() => {
+    if (contentSize.width === 0 || contentSize.height === 0) {
+      return;
     }
-  };
+
+    const calculatedPosition = calculatePopoverPosition(
+      anchorPosition,
+      contentSize,
+      { width: screenWidth, height: screenHeight },
+      side,
+      align,
+      sideOffset,
+      alignOffset,
+      avoidCollisions
+    );
+
+    setPosition({
+      top: calculatedPosition.top,
+      left: calculatedPosition.left,
+    });
+  }, [anchorPosition, contentSize, screenWidth, screenHeight, side, align, sideOffset, alignOffset, avoidCollisions]);
+
+  // Update position when dependencies change
+  React.useEffect(() => {
+    updatePosition();
+  }, [updatePosition]);
+
+  // Handle content layout to get size
+  const handleLayout = useCallback((event: { nativeEvent: { layout: { width: number; height: number } } }) => {
+    const { width, height } = event.nativeEvent.layout;
+    setContentSize({ width, height });
+  }, []);
+
+  // Don't render until we have valid anchor position
+  const hasValidPosition = anchorPosition.x !== 0 || anchorPosition.y !== 0;
+  const hasContentSize = contentSize.width > 0 && contentSize.height > 0;
 
   return (
     <TouchableWithoutFeedback>
       <View
         ref={contentRef}
+        onLayout={handleLayout}
         style={[
           styles.content,
           {
-            backgroundColor: grayAlpha['2'],
+            backgroundColor: colors['1'] || grayAlpha['12'],
             borderRadius: radii.medium,
             borderWidth: 1,
             borderColor: grayAlpha['7'],
+            // Only apply position styles when we have valid measurements
+            ...(hasValidPosition && hasContentSize ? {
+              position: 'absolute',
+              top: position.top ?? 0,
+              left: position.left ?? 0,
+            } : {
+              position: 'absolute',
+              left: -9999, // Off-screen until positioned
+              opacity: 0,
+            }),
           },
-          getPositionStyle(),
           style,
         ]}
       >
         {children}
-        {/* Arrow indicator */}
-        <View
-          style={[
-            styles.arrow,
-            {
-              borderColor: grayAlpha['7'],
-            },
-            side === 'bottom' && styles.arrowTop,
-            side === 'top' && styles.arrowBottom,
-            side === 'left' && styles.arrowRight,
-            side === 'right' && styles.arrowLeft,
-          ]}
-        />
       </View>
     </TouchableWithoutFeedback>
   );
@@ -281,7 +292,6 @@ interface PopoverArrowProps {
 
 export const PopoverArrow = ({ size = 8, style }: PopoverArrowProps) => {
   const { grayAlpha } = usePopover();
-  const theme = useTheme();
 
   return (
     <View
@@ -374,8 +384,7 @@ export const PopoverClose = ({
   children,
   ariaLabel = 'Close popover',
 }: PopoverCloseProps) => {
-  const { onOpenChange, colors, grayAlpha } = usePopover();
-  const theme = useTheme();
+  const { onOpenChange, colors } = usePopover();
 
   return (
     <Pressable
@@ -409,38 +418,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.15,
     shadowRadius: 8,
     elevation: 5,
-  },
-  arrow: {
-    position: 'absolute',
-    width: 0,
-    height: 0,
-    borderLeftWidth: 8,
-    borderRightWidth: 8,
-    borderBottomWidth: 8,
-    borderLeftColor: 'transparent',
-    borderRightColor: 'transparent',
-  },
-  arrowTop: {
-    top: -8,
-    borderBottomColor: '#fff',
-  },
-  arrowBottom: {
-    bottom: -8,
-    borderTopColor: '#fff',
-    borderBottomWidth: 0,
-    borderTopWidth: 8,
-  },
-  arrowLeft: {
-    left: -8,
-    borderRightColor: '#fff',
-    borderLeftWidth: 0,
-    borderRightWidth: 8,
-  },
-  arrowRight: {
-    right: -8,
-    borderLeftColor: '#fff',
-    borderRightWidth: 0,
-    borderLeftWidth: 8,
   },
   closeButton: {
     position: 'absolute',
