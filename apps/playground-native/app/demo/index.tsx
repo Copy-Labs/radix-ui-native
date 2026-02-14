@@ -109,6 +109,9 @@ export default function App() {
           <Link href={'/demo/select'}>
             <Text size={4}>Select (Compound)</Text>
           </Link>
+          <Link href={'/demo/slider'}>
+            <Text size={4}>Slider</Text>
+          </Link>
         </Flex>
       </ThemeProvider>
 
