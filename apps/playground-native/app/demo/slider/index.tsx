@@ -5,7 +5,9 @@ import {
   Heading,
   Text,
   ThemeProvider,
-  Slider, Card,
+  Slider,
+  Card,
+  Button,
 } from '@radix-ui/themes-native';
 import { useState } from 'react';
 
@@ -78,62 +80,105 @@ export default function SliderDemo() {
             </Flex>
 
             {/* Size Variants */}
-            <Flex direction={'column'} gap={8} marginBottom={16}>
+            <Flex direction={'column'} gap={16} marginBottom={16}>
               <Text size={4} weight="bold">
                 Size Variants
               </Text>
 
-              <Text size={2} color="gray">
-                Size 1 (Small)
-              </Text>
-              <Slider
-                size="1"
-                defaultValue={30}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Size 1 (Small)
+                </Text>
+                <Slider
+                  size="1"
+                  defaultValue={30}
+                  showValueLabel
+                />
+              </Card>
 
-              <Text size={2} color="gray">
-                Size 2 (Medium - Default)
-              </Text>
-              <Slider
-                size="2"
-                defaultValue={50}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Size 2 (Medium - Default)
+                </Text>
+                <Slider
+                  size="2"
+                  defaultValue={50}
+                  showValueLabel
+                />
+              </Card>
 
-              <Text size={2} color="gray">
-                Size 3 (Large)
-              </Text>
-              <Slider
-                size="3"
-                defaultValue={70}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Size 3 (Large)
+                </Text>
+                <Slider
+                  size="3"
+                  defaultValue={70}
+                  showValueLabel
+                />
+              </Card>
+
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Size 4 (Large)
+                </Text>
+                <Slider
+                  size="4"
+                  defaultValue={85}
+                  showValueLabel
+                />
+              </Card>
             </Flex>
 
             {/* Variant Styles */}
-            <Flex direction={'column'} gap={8} marginBottom={16}>
+            <Flex direction={'column'} gap={16} marginBottom={16}>
               <Text size={4} weight="bold">
                 Variant Styles
               </Text>
 
-              <Text size={2} color="gray">
-                Surface Variant (Default)
-              </Text>
-              <Slider
-                variant="surface"
-                defaultValue={40}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Solid Variant (Default)
+                </Text>
+                <Slider
+                  variant="solid"
+                  defaultValue={40}
+                  showValueLabel
+                />
+              </Card>
 
-              <Text size={2} color="gray">
-                Classic Variant
-              </Text>
-              <Slider
-                variant="classic"
-                defaultValue={60}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Soft Variant
+                </Text>
+                <Slider
+                  variant="soft"
+                  defaultValue={60}
+                  showValueLabel
+                />
+              </Card>
+
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Surface Variant
+                </Text>
+                <Slider
+                  variant="surface"
+                  defaultValue={40}
+                  showValueLabel
+                />
+              </Card>
+
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Outline Variant
+                </Text>
+                <Slider
+                  variant="outline"
+                  defaultValue={60}
+                  showValueLabel
+                />
+              </Card>
             </Flex>
 
             {/* High Contrast */}
@@ -142,22 +187,27 @@ export default function SliderDemo() {
                 High Contrast Mode
               </Text>
 
-              <Text size={2} color="gray">
-                Normal Contrast
-              </Text>
-              <Slider
-                defaultValue={50}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Accent Color - Normal Contrast
+                </Text>
+                <Slider
+                  defaultValue={50}
+                  showValueLabel
+                />
+              </Card>
 
-              <Text size={2} color="gray">
-                High Contrast
-              </Text>
-              <Slider
-                highContrast
-                defaultValue={50}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Accent Color - High Contrast
+                </Text>
+                <Slider
+                  highContrast
+                  defaultValue={50}
+                  showValueLabel
+                />
+              </Card>
+              <Button highContrast>Default Indigo Highcontrast Button</Button>
             </Flex>
 
             {/* Custom Colors */}
@@ -166,44 +216,49 @@ export default function SliderDemo() {
                 Custom Colors
               </Text>
 
-              <Text size={2} color="gray">
-                Blue (Default)
-              </Text>
-              <Slider
-                color="blue"
-                defaultValue={40}
-                showValueLabel
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Blue (Default)
+                </Text>
+                <Slider
+                  color="blue"
+                  defaultValue={40}
+                  showValueLabel
+                />
+              </Card>
 
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Green
+                </Text>
+                <Slider
+                  color="green"
+                  defaultValue={60}
+                  showValueLabel
+                />
+              </Card>
 
-              <Text size={2} color="gray">
-                Green
-              </Text>
-              <Slider
-                color="green"
-                defaultValue={60}
-                showValueLabel
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Red
+                </Text>
+                <Slider
+                  color="red"
+                  defaultValue={30}
+                  showValueLabel
+                />
+              </Card>
 
-              />
-
-              <Text size={2} color="gray">
-                Red
-              </Text>
-              <Slider
-                color="red"
-                defaultValue={30}
-                showValueLabel
-
-              />
-
-              <Text size={2} color="gray">
-                Purple
-              </Text>
-              <Slider
-                color="purple"
-                defaultValue={70}
-                showValueLabel
-              />
+              <Card size={1}>
+                <Text size={2} color="gray">
+                  Purple
+                </Text>
+                <Slider
+                  color="purple"
+                  defaultValue={70}
+                  showValueLabel
+                />
+              </Card>
             </Flex>
 
             {/* Step Increments */}
@@ -353,6 +408,15 @@ export default function SliderDemo() {
               </Text>
               <Slider
                 radius="small"
+                defaultValue={50}
+                showValueLabel
+              />
+
+              <Text size={2} color="gray">
+                None
+              </Text>
+              <Slider
+                radius="none"
                 defaultValue={50}
                 showValueLabel
               />

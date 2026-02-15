@@ -77,12 +77,12 @@ interface SliderProps {
    * Size variant
    * @default '2'
    */
-  size?: '1' | '2' | '3';
+  size?: '1' | '2' | '3' | '4';
   /**
    * Visual style variant
    * @default 'surface'
    */
-  variant?: 'surface' | 'classic';
+  variant?: 'surface' | 'solid' | 'soft' | 'outline';
   /**
    * Custom color for the slider
    */
@@ -164,7 +164,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
       step = 1,
       disabled = false,
       size = '2',
-      variant = 'surface',
+      variant = 'solid',
       color,
       radius = 'full',
       highContrast = false,
@@ -261,6 +261,12 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
             trackHeight: 8,
             thumbSize: 28,
             fontSize: theme.typography.fontSizes[3].fontSize,
+          };
+        case '4':
+          return {
+            trackHeight: 10,
+            thumbSize: 34,
+            fontSize: theme.typography.fontSizes[4].fontSize,
           };
         case '2':
         default:
@@ -533,8 +539,12 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
 
     // Calculate track colors based on variant
     const trackBackgroundColor = useMemo(() => {
-      if (variant === 'classic') {
+      if (variant === 'solid') {
         return isDark ? grayAlpha['7'] : grayAlpha['6'];
+      } else if (variant === 'outline') {
+        return 'transparent';
+      } else if (variant === 'surface' || 'soft') {
+        return variantColors.backgroundColor
       }
       // surface variant
       return colorAlpha['3'];
@@ -542,10 +552,20 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
 
     const filledTrackColor = useMemo(() => {
       if (highContrast) {
-        return colorScale[11];
+        return colorScale[12];
       }
       return colorScale[9];
     }, [highContrast, colorScale]);
+
+    const trackBorder = useMemo(() => {
+      if (['outline', 'surface'].includes(variant)) {
+        return {
+          borderWidth: 0.4,
+          borderColor: variantColors.borderColor, // colorScale[8]
+        };
+      }
+      return {borderWidth: 0.5, borderColor: 'transparent'};
+    }, [variant, colorAlpha]);
 
     // Interpolated thumb positions
     const getThumbTranslateX = useCallback(
@@ -569,6 +589,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
             height: sizeValues.trackHeight,
             borderRadius,
             backgroundColor: filledTrackColor,
+            opacity: disabled ? 0.4 : 1,
             width: animatedValue.interpolate({
               inputRange: [0, 1],
               outputRange: [0, trackLayout.width],
@@ -594,6 +615,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
             height: sizeValues.trackHeight,
             borderRadius,
             backgroundColor: filledTrackColor,
+            opacity: disabled ? 0.5 : 1,
           };
         }
       },
@@ -608,7 +630,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
         return {
           width: sizeValues.thumbSize,
           height: sizeValues.thumbSize,
-          borderRadius: sizeValues.thumbSize / 2,
+          borderRadius: borderRadius, // sizeValues.thumbSize / 2,
           backgroundColor: grayScale[1],
           shadowColor: '#000',
           shadowOffset: { width: 0, height: 1 },
@@ -628,7 +650,7 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
       () => ({
         width: sizeValues.thumbSize - 8,
         height: sizeValues.thumbSize - 8,
-        borderRadius: (sizeValues.thumbSize - 8) / 2,
+        borderRadius: borderRadius, // (sizeValues.thumbSize - 8) / 2,
         backgroundColor: filledTrackColor,
         opacity: disabled ? 0.5 : 1,
       }),
@@ -699,6 +721,8 @@ const Slider = React.forwardRef<React.ComponentRef<typeof RNView>, SliderProps>(
               height: sizeValues.trackHeight,
               borderRadius,
               backgroundColor: trackBackgroundColor,
+              borderColor: trackBorder.borderColor,
+              borderWidth: trackBorder.borderWidth,
             },
           ]}
           onLayout={handleTrackLayout}

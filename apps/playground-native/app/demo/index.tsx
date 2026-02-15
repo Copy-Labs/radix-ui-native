@@ -2,11 +2,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { ScrollView, StyleSheet } from 'react-native';
 import {
   AlertDialog,
+  Badge,
   Box,
   Button,
   Checkbox,
   Dialog,
-  Flex, Heading,
+  Flex,
+  Heading,
   Select,
   Text,
   TextArea,
@@ -110,7 +112,10 @@ export default function App() {
             <Text size={4}>Select (Compound)</Text>
           </Link>
           <Link href={'/demo/slider'}>
-            <Text size={4}>Slider</Text>
+            <Flex align={'center'} gap={8}>
+              <Text size={4}>Slider</Text>
+              <Badge color={'ruby'} radius={'full'} size={1} variant={'solid'}>New</Badge>
+            </Flex>
           </Link>
         </Flex>
       </ThemeProvider>
