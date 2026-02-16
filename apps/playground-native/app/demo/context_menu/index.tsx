@@ -7,7 +7,7 @@ import {
   ContextMenu,
   Card,
 } from '@radix-ui/themes-native';
-import { ScrollView, View, StyleSheet, Alert } from 'react-native';
+import { ScrollView, View, StyleSheet, Alert, Pressable } from 'react-native';
 import { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -43,14 +43,16 @@ export default function ContextMenuDemo() {
               </Text>
               <ContextMenu.Root>
                 <ContextMenu.Trigger>
-                  <Card>
-                    <Flex direction="column" gap={8}>
-                      <Heading size={3}>Long Press Me</Heading>
-                      <Text color="gray">
-                        Press and hold to see the context menu with basic options.
-                      </Text>
-                    </Flex>
-                  </Card>
+                  <Pressable>
+                    <Card>
+                      <Flex direction="column" gap={8}>
+                        <Heading size={3}>Long Press Me</Heading>
+                        <Text color="gray">
+                          Press and hold to see the context menu with basic options.
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </Pressable>
                 </ContextMenu.Trigger>
                 <ContextMenu.Portal>
                   <ContextMenu.Overlay />
@@ -81,14 +83,16 @@ export default function ContextMenuDemo() {
               </Text>
               <ContextMenu.Root>
                 <ContextMenu.Trigger>
-                  <Card>
-                    <Flex direction="column" gap={8}>
-                      <Heading size={3}>Edit Actions</Heading>
-                      <Text color="gray">
-                        Long press to see edit actions with shortcuts.
-                      </Text>
-                    </Flex>
-                  </Card>
+                  <Pressable>
+                    <Card>
+                      <Flex direction="column" gap={8}>
+                        <Heading size={3}>Edit Actions</Heading>
+                        <Text color="gray">
+                          Long press to see edit actions with shortcuts.
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </Pressable>
                 </ContextMenu.Trigger>
                 <ContextMenu.Portal>
                   <ContextMenu.Overlay />
@@ -122,14 +126,16 @@ export default function ContextMenuDemo() {
               </Text>
               <ContextMenu.Root>
                 <ContextMenu.Trigger>
-                  <Card>
-                    <Flex direction="column" gap={8}>
-                      <Heading size={3}>Document Actions</Heading>
-                      <Text color="gray">
-                        Long press to toggle bookmark and favorite states.
-                      </Text>
-                    </Flex>
-                  </Card>
+                  <Pressable>
+                    <Card>
+                      <Flex direction="column" gap={8}>
+                        <Heading size={3}>Document Actions</Heading>
+                        <Text color="gray">
+                          Long press to toggle bookmark and favorite states.
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </Pressable>
                 </ContextMenu.Trigger>
                 <ContextMenu.Portal>
                   <ContextMenu.Overlay />
@@ -165,14 +171,16 @@ export default function ContextMenuDemo() {
               </Text>
               <ContextMenu.Root>
                 <ContextMenu.Trigger>
-                  <Card>
-                    <Flex direction="column" gap={8}>
-                      <Heading size={3}>View Options</Heading>
-                      <Text color="gray">
-                        Long press to change the view mode.
-                      </Text>
-                    </Flex>
-                  </Card>
+                  <Pressable>
+                    <Card>
+                      <Flex direction="column" gap={8}>
+                        <Heading size={3}>View Options</Heading>
+                        <Text color="gray">
+                          Long press to change the view mode.
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </Pressable>
                 </ContextMenu.Trigger>
                 <ContextMenu.Portal>
                   <ContextMenu.Overlay />
@@ -209,14 +217,16 @@ export default function ContextMenuDemo() {
               <Heading size={4}>Menu with Groups</Heading>
               <ContextMenu.Root>
                 <ContextMenu.Trigger>
-                  <Card>
-                    <Flex direction="column" gap={8}>
-                      <Heading size={3}>File Actions</Heading>
-                      <Text color="gray">
-                        Long press to see grouped file actions.
-                      </Text>
-                    </Flex>
-                  </Card>
+                  <Pressable>
+                    <Card>
+                      <Flex direction="column" gap={8}>
+                        <Heading size={3}>File Actions</Heading>
+                        <Text color="gray">
+                          Long press to see grouped file actions.
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </Pressable>
                 </ContextMenu.Trigger>
                 <ContextMenu.Portal>
                   <ContextMenu.Overlay />
@@ -253,14 +263,16 @@ export default function ContextMenuDemo() {
               <Heading size={4}>Menu with Disabled Items</Heading>
               <ContextMenu.Root>
                 <ContextMenu.Trigger>
-                  <Card>
-                    <Flex direction="column" gap={8}>
-                      <Heading size={3}>Advanced Options</Heading>
-                      <Text color="gray">
-                        Some options may be disabled.
-                      </Text>
-                    </Flex>
-                  </Card>
+                  <Pressable>
+                    <Card asChild>
+                      <Flex direction="column" gap={8}>
+                        <Heading size={3}>Advanced Options</Heading>
+                        <Text color="gray">
+                          Some options may be disabled.
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </Pressable>
                 </ContextMenu.Trigger>
                 <ContextMenu.Portal>
                   <ContextMenu.Overlay />
@@ -293,9 +305,11 @@ export default function ContextMenuDemo() {
                 {/* Size 1 - Small */}
                 <ContextMenu.Root>
                   <ContextMenu.Trigger>
-                    <Card style={{ minWidth: 100 }}>
-                      <Text size={2}>Size 1 (Small)</Text>
-                    </Card>
+                    <Pressable>
+                      <Card style={{ minWidth: 100 }}>
+                        <Text size={2}>Size 1 (Small)</Text>
+                      </Card>
+                    </Pressable>
                   </ContextMenu.Trigger>
                   <ContextMenu.Portal>
                     <ContextMenu.Overlay />
@@ -313,9 +327,11 @@ export default function ContextMenuDemo() {
                 {/* Size 2 - Medium (default) */}
                 <ContextMenu.Root>
                   <ContextMenu.Trigger>
-                    <Card style={{ minWidth: 100 }}>
-                      <Text size={2}>Size 2 (Medium)</Text>
-                    </Card>
+                    <Pressable>
+                      <Card style={{ minWidth: 100 }}>
+                        <Text size={2}>Size 2 (Medium)</Text>
+                      </Card>
+                    </Pressable>
                   </ContextMenu.Trigger>
                   <ContextMenu.Portal>
                     <ContextMenu.Overlay />
@@ -333,9 +349,11 @@ export default function ContextMenuDemo() {
                 {/* Size 3 - Large */}
                 <ContextMenu.Root>
                   <ContextMenu.Trigger>
-                    <Card style={{ minWidth: 100 }}>
-                      <Text size={2}>Size 3 (Large)</Text>
-                    </Card>
+                    <Pressable>
+                      <Card style={{ minWidth: 100 }}>
+                        <Text size={2}>Size 3 (Large)</Text>
+                      </Card>
+                    </Pressable>
                   </ContextMenu.Trigger>
                   <ContextMenu.Portal>
                     <ContextMenu.Overlay />
@@ -369,14 +387,16 @@ export default function ContextMenuDemo() {
               </Text>
               <ContextMenu.Root>
                 <ContextMenu.Trigger>
-                  <Card>
-                    <Flex direction="column" gap={8}>
-                      <Heading size={3}>Danger Zone</Heading>
-                      <Text color="gray">
-                        Long press to see destructive actions.
-                      </Text>
-                    </Flex>
-                  </Card>
+                  <Pressable>
+                    <Card>
+                      <Flex direction="column" gap={8}>
+                        <Heading size={3}>Danger Zone</Heading>
+                        <Text color="gray">
+                          Long press to see destructive actions.
+                        </Text>
+                      </Flex>
+                    </Card>
+                  </Pressable>
                 </ContextMenu.Trigger>
                 <ContextMenu.Portal>
                   <ContextMenu.Overlay />
@@ -414,14 +434,16 @@ function ControlledContextMenuDemo() {
       </Text>
       <ContextMenu.Root open={open} onOpenChange={setOpen}>
         <ContextMenu.Trigger>
-          <Card>
-            <Flex direction="column" gap={8}>
-              <Heading size={3}>Controlled Menu</Heading>
-              <Text color="gray">
-                Long press or use the button below to toggle.
-              </Text>
-            </Flex>
-          </Card>
+          <Pressable>
+            <Card>
+              <Flex direction="column" gap={8}>
+                <Heading size={3}>Controlled Menu</Heading>
+                <Text color="gray">
+                  Long press or use the button below to toggle.
+                </Text>
+              </Flex>
+            </Card>
+          </Pressable>
         </ContextMenu.Trigger>
         <ContextMenu.Portal>
           <ContextMenu.Overlay />
