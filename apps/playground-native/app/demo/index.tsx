@@ -71,6 +71,14 @@ export default function App() {
           <Link href={'/demo/checkbox'}>
             <Text size={4}>Checkbox</Text>
           </Link>
+          <Link href={'/demo/checkbox_cards'}>
+            <Flex align={'center'} gap={8}>
+              <Text size={4}>Checkbox Cards</Text>
+              <Badge color={'purple'} radius={'full'} size={2} variant={'solid'}>
+                New
+              </Badge>
+            </Flex>
+          </Link>
           <Link href={'/demo/dialog'}>
             <Text size={4}>Dialog</Text>
           </Link>
@@ -79,6 +87,14 @@ export default function App() {
           </Link>
           <Link href={'/demo/radio'}>
             <Text size={4}>Radio</Text>
+          </Link>
+          <Link href={'/demo/radio_cards'}>
+            <Flex align={'center'} gap={8}>
+              <Text size={4}>Radio Cards</Text>
+              <Badge color={'purple'} radius={'full'} size={2} variant={'solid'}>
+                New
+              </Badge>
+            </Flex>
           </Link>
           <Link href={'/demo/text_fields'}>
             <Text size={4}>Text Fields</Text>
