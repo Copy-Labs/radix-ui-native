@@ -796,6 +796,91 @@ import { SegmentedControl } from '@radix-ui/themes-native';
 />
 ```
 
+## Disclosure Components
+
+### Accordion
+
+A vertically stacked set of interactive headings that each reveal associated content sections.
+
+```tsx
+import { Accordion } from '@radix-ui/themes-native';
+
+// Single mode - only one item open at a time
+<Accordion.Root type="single" defaultValue="item-1" collapsible>
+  <Accordion.Item value="item-1">
+    <Accordion.Header>
+      <Accordion.Trigger>First Item</Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content>Content for first item</Accordion.Content>
+  </Accordion.Item>
+  <Accordion.Item value="item-2">
+    <Accordion.Header>
+      <Accordion.Trigger>Second Item</Accordion.Trigger>
+    </Accordion.Header>
+    <Accordion.Content>Content for second item</Accordion.Content>
+  </Accordion.Item>
+</Accordion.Root>
+
+// Multiple mode - multiple items can be open
+<Accordion.Root type="multiple" defaultValue={['item-1', 'item-2']}>
+  ...
+</Accordion.Root>
+```
+
+#### Accordion.Root Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `type` | `'single' \| 'multiple'` | required | Whether one or multiple items can be open |
+| `value` | `string \| string[]` | - | Controlled value(s) of open items |
+| `defaultValue` | `string \| string[]` | - | Default uncontrolled value(s) |
+| `onValueChange` | `(value: string \| string[]) => void` | - | Callback when value changes |
+| `collapsible` | `boolean` | `false` | When type is single, allows closing the open item |
+| `disabled` | `boolean` | `false` | Disable all items |
+| `dir` | `'ltr' \| 'rtl'` | `'ltr'` | Direction for chevron rotation |
+| `size` | `'1' \| '2' \| '3'` | `'2'` | Size variant |
+| `children` | `ReactNode` | required | Accordion items |
+| `style` | `StyleProp<ViewStyle>` | - | Custom styles |
+
+#### Accordion.Item Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | required | Unique value identifier for this item |
+| `disabled` | `boolean` | `false` | Disable this specific item |
+| `children` | `ReactNode` | required | Header and Content components |
+| `style` | `StyleProp<ViewStyle>` | - | Custom styles |
+
+#### Accordion.Header Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | AccordionTrigger element |
+| `style` | `StyleProp<ViewStyle>` | - | Custom styles |
+
+#### Accordion.Trigger Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | Trigger text/content |
+| `style` | `StyleProp<ViewStyle>` | - | Custom styles |
+| `icon` | `ReactNode` | - | Custom chevron icon |
+
+#### Accordion.Content Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `children` | `ReactNode` | required | Content to show/hide |
+| `style` | `StyleProp<ViewStyle>` | - | Custom styles |
+
+#### Accordion Sizes
+
+| Size | Description |
+|------|-------------|
+| `1` | Small - compact size for tight spaces |
+| `2` | Medium - default size for most use cases |
+| `3` | Large - larger size for prominent sections |
+
 ## Overlay Components
 
 ### Portal

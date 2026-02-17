@@ -45,6 +45,14 @@ export default function App() {
           <Link href={'/demo/alert_dialog'}>
             <Text size={4}>Alert Dialog</Text>
           </Link>
+          <Link href={'/demo/accordion'}>
+            <Flex align={'center'} gap={8}>
+              <Text size={4}>Accordion</Text>
+              <Badge color={'amber'} radius={'full'} size={2} variant={'solid'}>
+                New
+              </Badge>
+            </Flex>
+          </Link>
           <Link href={'/demo/aspect_ratio'}>
             <Text size={4}>Aspect ratio</Text>
           </Link>
