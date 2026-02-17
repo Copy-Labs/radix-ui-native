@@ -31,7 +31,7 @@ export * from './typography';
 export * from './shadows';
 
 // ThemeProvider
-export { ThemeProvider, useTheme, useThemeMode, useThemeActions, useThemeContext } from './ThemeProvider';
+export { ThemeProvider, useTheme, useThemeMode, useThemeActions, useThemeContext, useToast } from './ThemeProvider';
 
 // Color helpers
 export * from './color-helpers';
