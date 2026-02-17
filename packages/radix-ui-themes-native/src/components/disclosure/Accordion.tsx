@@ -13,20 +13,13 @@ import {
   type ViewStyle,
   type StyleProp,
   Animated,
-  LayoutAnimation,
-  Platform,
-  UIManager,
+  type LayoutChangeEvent,
 } from 'react-native';
 import { TouchableOpacity, View } from '../primitives';
 import { Text } from '../typography';
 import { useTheme, useThemeMode } from '../../hooks/useTheme';
 import { getGrayAlpha } from '../../theme/color-helpers';
 import { ChevronDownIcon } from '../utilities/icons';
-
-// Enable LayoutAnimation for Android
-if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
-  UIManager.setLayoutAnimationEnabledExperimental(true);
-}
 
 // ============================================================================
 // Types
@@ -366,9 +359,6 @@ const AccordionTrigger = React.forwardRef<
   const handlePress = () => {
     if (disabled) return;
 
-    // Configure layout animation for smooth content expand/collapse
-    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-
     if (type === 'single') {
       if (open && collapsible) {
         onValueChange('');
@@ -388,13 +378,7 @@ const AccordionTrigger = React.forwardRef<
     }
   };
 
-  // Interpolate rotation value (0 to 180 degrees)
-  const rotationInterpolate = rotationAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '180deg'],
-  });
-
-  // RTL support
+  // RTL support for rotation
   const rtlRotationInterpolate = rotationAnim.interpolate({
     inputRange: [0, 1],
     outputRange: dir === 'rtl' ? ['0deg', '-180deg'] : ['0deg', '180deg'],
@@ -496,25 +480,14 @@ const AccordionContent = React.forwardRef<
 
   const grayAlpha = getGrayAlpha(theme);
 
-  // Animation values
-  const heightAnim = useRef(new Animated.Value(open ? 1 : 0)).current;
-  const opacityAnim = useRef(new Animated.Value(open ? 1 : 0)).current;
+  // Track content height
+  const [contentHeight, setContentHeight] = useState(0);
 
-  // Animate when open state changes
-  useEffect(() => {
-    Animated.parallel([
-      Animated.timing(heightAnim, {
-        toValue: open ? 1 : 0,
-        duration: 200,
-        useNativeDriver: false, // height can't use native driver
-      }),
-      Animated.timing(opacityAnim, {
-        toValue: open ? 1 : 0,
-        duration: 150,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [open, heightAnim, opacityAnim]);
+  // Animation value for height
+  const heightAnim = useRef(new Animated.Value(0)).current;
+
+  // Animation value for opacity
+  const opacityAnim = useRef(new Animated.Value(0)).current;
 
   // Size-based padding
   const getContentPadding = () => {
@@ -529,36 +502,86 @@ const AccordionContent = React.forwardRef<
     }
   };
 
-  const contentStyle: ViewStyle = {
-    paddingVertical: getContentPadding(),
-    paddingHorizontal: getContentPadding(),
+  // Handle content layout to get height
+  const handleLayout = (event: LayoutChangeEvent) => {
+    const height = event.nativeEvent.layout.height;
+    if (height > 0 && height !== contentHeight) {
+      setContentHeight(height);
+    }
   };
 
-  // Don't render if not open (after animation completes)
-  if (!open) {
-    return null;
-  }
+  // Animate when open state or content height changes
+  useEffect(() => {
+    if (open && contentHeight > 0) {
+      // Opening animation
+      Animated.parallel([
+        Animated.timing(heightAnim, {
+          toValue: contentHeight,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 1,
+          duration: 150,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    } else if (!open && contentHeight > 0) {
+      // Closing animation
+      Animated.parallel([
+        Animated.timing(heightAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: false,
+        }),
+        Animated.timing(opacityAnim, {
+          toValue: 0,
+          duration: 100,
+          useNativeDriver: false,
+        }),
+      ]).start();
+    }
+  }, [open, contentHeight, heightAnim, opacityAnim]);
+
+  const contentPadding = getContentPadding();
+
+  const contentStyle: ViewStyle = {
+    paddingVertical: contentPadding,
+    paddingHorizontal: contentPadding,
+  };
 
   return (
-    <View
-      ref={ref}
-      style={[styles.content, contentStyle, style]}
-      accessibilityState={{ expanded: open, hidden: !open }}
+    <Animated.View
+      style={[
+        styles.contentWrapper,
+        {
+          height: contentHeight > 0 ? heightAnim : undefined,
+          opacity: opacityAnim,
+          overflow: 'hidden',
+        },
+      ]}
     >
-      {typeof children === 'string' ? (
-        <Text
-          style={{
-            color: isDark ? grayAlpha['11'] : grayAlpha['11'],
-            fontSize: theme.typography.fontSizes[2].fontSize,
-            lineHeight: theme.typography.fontSizes[2].lineHeight,
-          }}
-        >
-          {children}
-        </Text>
-      ) : (
-        children
-      )}
-    </View>
+      <View
+        ref={ref}
+        style={[styles.content, contentStyle, style]}
+        onLayout={handleLayout}
+        accessibilityState={{ expanded: open }}
+      >
+        {typeof children === 'string' ? (
+          <Text
+            style={{
+              color: isDark ? grayAlpha['11'] : grayAlpha['11'],
+              fontSize: theme.typography.fontSizes[2].fontSize,
+              lineHeight: theme.typography.fontSizes[2].lineHeight,
+            }}
+          >
+            {children}
+          </Text>
+        ) : (
+          children
+        )}
+      </View>
+    </Animated.View>
   );
 });
 
@@ -578,8 +601,15 @@ const styles = StyleSheet.create({
   header: {
     width: '100%',
   },
+  contentWrapper: {
+    width: '100%',
+  },
   content: {
     width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
   },
 });
 
