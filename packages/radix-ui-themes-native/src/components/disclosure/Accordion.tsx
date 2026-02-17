@@ -3,6 +3,8 @@ import React, {
   useContext,
   useState,
   useCallback,
+  useEffect,
+  useRef,
   type ReactNode,
   type ComponentRef,
 } from 'react';
@@ -10,12 +12,21 @@ import {
   StyleSheet,
   type ViewStyle,
   type StyleProp,
+  Animated,
+  LayoutAnimation,
+  Platform,
+  UIManager,
 } from 'react-native';
 import { TouchableOpacity, View } from '../primitives';
 import { Text } from '../typography';
 import { useTheme, useThemeMode } from '../../hooks/useTheme';
 import { getGrayAlpha } from '../../theme/color-helpers';
 import { ChevronDownIcon } from '../utilities/icons';
+
+// Enable LayoutAnimation for Android
+if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+  UIManager.setLayoutAnimationEnabledExperimental(true);
+}
 
 // ============================================================================
 // Types
@@ -307,6 +318,18 @@ const AccordionTrigger = React.forwardRef<
 
   const grayAlpha = getGrayAlpha(theme);
 
+  // Animation for chevron rotation
+  const rotationAnim = useRef(new Animated.Value(open ? 1 : 0)).current;
+
+  // Animate rotation when open state changes
+  useEffect(() => {
+    Animated.timing(rotationAnim, {
+      toValue: open ? 1 : 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [open, rotationAnim]);
+
   // Size-based styling
   const getSizeStyles = () => {
     switch (size) {
@@ -343,6 +366,9 @@ const AccordionTrigger = React.forwardRef<
   const handlePress = () => {
     if (disabled) return;
 
+    // Configure layout animation for smooth content expand/collapse
+    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+
     if (type === 'single') {
       if (open && collapsible) {
         onValueChange('');
@@ -362,9 +388,17 @@ const AccordionTrigger = React.forwardRef<
     }
   };
 
-  // Chevron rotation based on open state
-  const rotation = open ? '180deg' : '0deg';
-  const rtlRotation = dir === 'rtl' ? (open ? '-180deg' : '0deg') : rotation;
+  // Interpolate rotation value (0 to 180 degrees)
+  const rotationInterpolate = rotationAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '180deg'],
+  });
+
+  // RTL support
+  const rtlRotationInterpolate = rotationAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: dir === 'rtl' ? ['0deg', '-180deg'] : ['0deg', '180deg'],
+  });
 
   const triggerStyle: ViewStyle = {
     flexDirection: 'row',
@@ -413,9 +447,9 @@ const AccordionTrigger = React.forwardRef<
       {icon ? (
         icon
       ) : (
-        <View
+        <Animated.View
           style={{
-            transform: [{ rotate: rtlRotation }],
+            transform: [{ rotate: rtlRotationInterpolate }],
             marginLeft: theme.space[2],
           }}
         >
@@ -424,7 +458,7 @@ const AccordionTrigger = React.forwardRef<
             height={sizeStyles.iconSize}
             color={getIconColor()}
           />
-        </View>
+        </Animated.View>
       )}
     </TouchableOpacity>
   );
@@ -462,6 +496,26 @@ const AccordionContent = React.forwardRef<
 
   const grayAlpha = getGrayAlpha(theme);
 
+  // Animation values
+  const heightAnim = useRef(new Animated.Value(open ? 1 : 0)).current;
+  const opacityAnim = useRef(new Animated.Value(open ? 1 : 0)).current;
+
+  // Animate when open state changes
+  useEffect(() => {
+    Animated.parallel([
+      Animated.timing(heightAnim, {
+        toValue: open ? 1 : 0,
+        duration: 200,
+        useNativeDriver: false, // height can't use native driver
+      }),
+      Animated.timing(opacityAnim, {
+        toValue: open ? 1 : 0,
+        duration: 150,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [open, heightAnim, opacityAnim]);
+
   // Size-based padding
   const getContentPadding = () => {
     switch (size) {
@@ -475,14 +529,15 @@ const AccordionContent = React.forwardRef<
     }
   };
 
-  if (!open) {
-    return null;
-  }
-
   const contentStyle: ViewStyle = {
     paddingVertical: getContentPadding(),
     paddingHorizontal: getContentPadding(),
   };
+
+  // Don't render if not open (after animation completes)
+  if (!open) {
+    return null;
+  }
 
   return (
     <View
