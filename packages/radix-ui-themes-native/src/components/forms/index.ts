@@ -21,12 +21,20 @@ export type { CheckboxProps } from './Checkbox';
 export { CheckboxGroup } from './CheckboxGroup';
 export type { CheckboxGroupProps, CheckboxItem } from './CheckboxGroup';
 
+// CheckboxCards components
+export { CheckboxCards, CheckboxCardsRoot, CheckboxCardsItem } from './CheckboxCards';
+export type { CheckboxCardsRootProps, CheckboxCardsItemProps, CheckboxCardsContextValue } from './CheckboxCards';
+
 // Radio components
 export { Radio } from './Radio';
 export type { RadioProps } from './Radio';
 
 export { RadioGroup } from './RadioGroup';
 export type { RadioGroupProps, RadioItem } from './RadioGroup';
+
+// RadioCards components
+export { RadioCards, RadioCardsRoot, RadioCardsItem } from './RadioCards';
+export type { RadioCardsRootProps, RadioCardsItemProps, RadioCardsContextValue } from './RadioCards';
 
 // Switch component
 export { Switch } from './Switch';
