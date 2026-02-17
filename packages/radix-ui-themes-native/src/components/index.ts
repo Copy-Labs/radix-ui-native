@@ -7,3 +7,4 @@ export * from './overlays';
 export * from './data-display';
 export * from './navigation';
 export * from './utilities';
+export * from './disclosure';
