@@ -214,6 +214,14 @@ export default function App() {
               </Badge>
             </Flex>
           </Link>
+          <Link href={'/demo/toast'}>
+            <Flex align={'center'} gap={8}>
+              <Text size={4}>Toast</Text>
+              <Badge color={'green'} radius={'full'} size={2} variant={'solid'}>
+                New
+              </Badge>
+            </Flex>
+          </Link>
         </Flex>
       </ThemeProvider>
 
@@ -271,7 +279,9 @@ export default function App() {
             <Select.Root value={radioValue} onValueChange={setRadioValue}>
               <Select.Trigger asChild>
                 <Button variant="solid">
-                  <Select.Value placeholder="Select an option" />
+                  <Button.Label>
+                    <Select.Value placeholder="Select an option" />
+                  </Button.Label>
                 </Button>
               </Select.Trigger>
               <Select.Portal>
