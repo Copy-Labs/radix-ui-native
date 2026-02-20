@@ -48,7 +48,7 @@ export default function App() {
           <Link href={'/demo/accordion'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Accordion</Text>
-              <Badge color={'amber'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
@@ -68,7 +68,7 @@ export default function App() {
           <Link href={'/demo/callout'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Callout</Text>
-              <Badge color={'green'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
@@ -82,7 +82,7 @@ export default function App() {
           <Link href={'/demo/checkbox_cards'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Checkbox Cards</Text>
-              <Badge color={'purple'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
@@ -99,7 +99,7 @@ export default function App() {
           <Link href={'/demo/radio_cards'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Radio Cards</Text>
-              <Badge color={'purple'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
@@ -193,7 +193,7 @@ export default function App() {
           <Link href={'/demo/context_menu'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Context Menu</Text>
-              <Badge color={'green'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
@@ -201,7 +201,7 @@ export default function App() {
           <Link href={'/demo/datalist'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>DataList</Text>
-              <Badge color={'blue'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
@@ -209,7 +209,7 @@ export default function App() {
           <Link href={'/demo/inset'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Inset</Text>
-              <Badge color={'blue'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
@@ -217,7 +217,7 @@ export default function App() {
           <Link href={'/demo/toast'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Toast</Text>
-              <Badge color={'green'} radius={'full'} size={2} variant={'solid'}>
+              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
                 New
               </Badge>
             </Flex>
