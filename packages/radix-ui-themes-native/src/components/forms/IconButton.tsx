@@ -5,7 +5,9 @@ import { useTheme, useThemeMode } from '../../hooks/useTheme';
 import {
   getAccentColor,
   getAccentAlpha,
-  getGrayAlpha, getContrast,
+  getGrayAlpha,
+  getContrast,
+  getVariantColors,
 } from '../../theme/color-helpers';
 import RnTouchableOpacity from '../../components/primitives/TouchableOpacity';
 import type { Color, RadiusSize } from '../../theme';
@@ -111,7 +113,7 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
       return undefined; // Will use size-based default
     };
 
-    // Get colors based on variant and mode
+    /*// Get colors based on variant and mode
     const getVariantColors = () => {
       // Solid/high-contrast text color
       // const solidTextColor = highContrast
@@ -155,9 +157,9 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
             borderColor: 'transparent',
           };
       }
-    };
+    };*/
 
-    const variantColors = getVariantColors();
+    const variantColors = getVariantColors(theme, activeColor, mode, variant, highContrast);
 
     // Get size values
     const getSizeValues = () => {
@@ -233,11 +235,11 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
         {...rest}
       >
         {loading ? (
-          <ActivityIndicator size="small" color={variantColors.iconColor} />
+          <ActivityIndicator size="small" color={variantColors.textColor} />
         ) : React.isValidElement(children) ? (
           React.cloneElement(children as React.ReactElement<any>, {
             size: sizeValues.iconSize,
-            color: variantColors.iconColor,
+            color: variantColors.textColor,
           })
         ) : (
           children
