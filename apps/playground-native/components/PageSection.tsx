@@ -5,6 +5,7 @@ import {Ionicons} from "@expo/vector-icons";
 import { router } from "expo-router";
 import {LucideArrowLeft} from "lucide-react-native";
 import { Flex, Heading, IconButton, Text, useTheme, useThemeMode } from '@radix-ui/themes-native';
+import { Icon } from '@/components/ui/icon-lucide';
 
 type childrenProps = ReactElement | ReactElement[] | any | any[] | null;
 
@@ -81,6 +82,8 @@ export const PageHeading = ({ center = false, className, children }: { center?: 
 
 export const PageHeader = ({ showBackButton = false, className, children }: { showBackButton?: boolean; className?: string; children: childrenProps }) => {
   const theme = useTheme();
+  const mode = useThemeMode();
+  const themedBackIconColor = mode === 'dark' ? theme.colors.gray.dark['12'] : theme.colors.gray['11'];
 
   return (
     <Flex
@@ -91,8 +94,13 @@ export const PageHeader = ({ showBackButton = false, className, children }: { sh
     >
       {showBackButton ? (
         <Flex align={'center'} flex={1} gap={4}>
-          <IconButton accessibilityLabel={'back button'} color={'gray'} variant={'ghost'} onPress={() => router.back()}>
-            <LucideArrowLeft color={theme.colors.gray['11']} size={32} strokeWidth={4} />
+          <IconButton
+            accessibilityLabel={'back button'}
+            color={'gray'}
+            variant={'ghost'}
+            onPress={() => router.back()}
+          >
+            <Ionicons name={'arrow-back'} size={32} style={{ color: themedBackIconColor }} />
           </IconButton>
           {children}
         </Flex>
