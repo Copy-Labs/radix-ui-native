@@ -54,7 +54,7 @@ interface ButtonProps {
    * Button size
    * @default 2
    */
-  size?: 1 | 2 | 3;
+  size?: 1 | 2 | 3 | 4;
   /**
    * Whether the button is disabled
    */
@@ -155,12 +155,14 @@ ButtonLabel.displayName = 'ButtonLabel';
 /**
  * Get icon size based on button size
  */
-const getIconSize = (size: 1 | 2 | 3): number => {
+const getIconSize = (size: 1 | 2 | 3 | 4): number => {
   switch (size) {
     case 1:
       return 16;
     case 3:
       return 24;
+    case 4:
+      return 28;
     case 2:
     default:
       return 20;
@@ -250,6 +252,13 @@ const Button = React.memo(
               paddingVertical: theme.space[3],
               paddingHorizontal: theme.space[5],
               fontSize: theme.typography.fontSizes[4].fontSize,
+              borderRadius: selectedRadius === 'full' ? 9999 : radii,
+            };
+          case 4:
+            return {
+              paddingVertical: theme.space[4],
+              paddingHorizontal: theme.space[6],
+              fontSize: theme.typography.fontSizes[5].fontSize,
               borderRadius: selectedRadius === 'full' ? 9999 : radii,
             };
           case 2:

@@ -6,6 +6,7 @@ import {
   Card,
   Flex,
   Heading,
+  IconButton,
   Tabs,
   Text,
   ThemeProvider,
@@ -14,7 +15,7 @@ import { useState } from 'react';
 import {
   LucideBookmark,
   LucideChartNoAxesColumn,
-  LucideHeart,
+  LucideHeart, LucideMail,
   LucideMessageCircle,
   LucideRepeat2,
   LucideShare2,
@@ -28,10 +29,11 @@ export default function ProfileScreen() {
       {/*<SafeAreaView>*/}
       <ThemeProvider
         mode={'light'}
-        themeOptions={{ accentColor: 'blue', radiusFactor: 8, scaling: 1 }}
+        themeOptions={{ accentColor: 'blue', radius: 'large', scaling: 1 }}
       >
         <Flex style={{ backgroundColor: 'lightgray', minHeight: 140 }}>
           <Avatar
+            radius={'full'}
             size={7}
             src="https://images.unsplash.com/photo-1502823403499-6ccfcf4fb453?&w=256&h=256&q=70&crop=focalpoint&fp-x=0.5&fp-y=0.3&fp-z=1&fit=crop"
             fallback="A"
@@ -51,7 +53,10 @@ export default function ProfileScreen() {
               <Heading size={4}>Mayowa Obisesan</Heading>
               <Text color={'gray'}>@amdblessed</Text>
             </Box>
-            <Flex gap={4}>
+            <Flex align={'center'} gap={4}>
+              <IconButton accessibilityLabel={'mail'}>
+                <LucideMail />
+              </IconButton>
               <Button color={'crimson'} size={1}>
                 Subscribe
               </Button>
@@ -149,17 +154,14 @@ export default function ProfileScreen() {
                       </Flex>
                     </Button>
                     <Button color={'gray'} size={1} variant={'ghost'}>
-                      <Flex align={'center'} backgroundColor={'transparent'}>
-                        <Text>
-                          <LucideBookmark size={15} />
-                        </Text>
+                      <Flex align={'center'}>
+                        <LucideBookmark size={16} />
                       </Flex>
                     </Button>
                     <Button color={'gray'} size={1} variant={'ghost'}>
                       <Flex align={'center'} backgroundColor={'transparent'}>
-                        <Text>
-                          <LucideShare2 size={15} />
-                        </Text>
+                        <LucideShare2 size={16} />
+                        {/*<Text></Text>*/}
                       </Flex>
                     </Button>
                   </Flex>

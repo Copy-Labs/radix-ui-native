@@ -8,13 +8,13 @@ import {
   getGrayAlpha, getContrast,
 } from '../../theme/color-helpers';
 import RnTouchableOpacity from '../../components/primitives/TouchableOpacity';
-import type { Color } from '../../theme';
+import type { Color, RadiusSize } from '../../theme';
 
 interface IconButtonProps {
   /**
-   * Icon component to render
+   * Icon component to render as children
    */
-  icon: React.ReactNode;
+  children?: React.ReactNode;
   /**
    * Style prop for the IconButton
    */
@@ -25,7 +25,7 @@ interface IconButtonProps {
    */
   variant?: 'classic' | 'solid' | 'soft' | 'outline' | 'ghost';
   /**
-   * Color scheme for the badge
+   * Color scheme for the button
    * @default undefined (uses theme's accentColor)
    */
   color?: Color;
@@ -33,7 +33,16 @@ interface IconButtonProps {
    * Button size
    * @default 2
    */
-  size?: 1 | 2 | 3;
+  size?: 1 | 2 | 3 | 4;
+  /**
+   * Border radius override
+   */
+  radius?: RadiusSize;
+  /**
+   * Merge props onto the child element
+   * @default false
+   */
+  asChild?: boolean;
   /**
    * Whether the button is disabled
    */
@@ -68,11 +77,13 @@ interface IconButtonProps {
 const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>, IconButtonProps>(
   (
     {
-      icon,
+      children,
       style = {},
       variant = 'classic',
       color,
       size = 2,
+      radius,
+      asChild = false,
       disabled,
       loading,
       onPress,
@@ -91,6 +102,14 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
     const accentAlpha = getAccentAlpha(theme);
     const radii = theme.radii;
     const activeColor = color || theme.accentColor;
+
+    // Get border radius based on radius prop or default
+    const getBorderRadius = () => {
+      if (radius) {
+        return radius === 'full' ? 9999 : radii[radius];
+      }
+      return undefined; // Will use size-based default
+    };
 
     // Get colors based on variant and mode
     const getVariantColors = () => {
@@ -155,6 +174,12 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
             iconSize: 24,
             borderRadius: radii.medium,
           };
+        case 4:
+          return {
+            size: 64,
+            iconSize: 28,
+            borderRadius: radii.large,
+          };
         case 2:
         default:
           return {
@@ -166,6 +191,7 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
     };
 
     const sizeValues = getSizeValues();
+    const customBorderRadius = getBorderRadius();
 
     const buttonStyle: ViewStyle = {
       width: sizeValues.size,
@@ -173,11 +199,27 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
       backgroundColor: disabled ? grayAlpha['3'] : variantColors.backgroundColor,
       borderColor: variantColors.borderColor,
       borderWidth: variant === 'outline' ? 1 : 0,
-      borderRadius: sizeValues.borderRadius,
+      borderRadius: customBorderRadius !== undefined ? customBorderRadius : sizeValues.borderRadius,
       opacity: disabled ? 0.5 : 1,
       alignItems: 'center',
       justifyContent: 'center',
     };
+
+    // Handle asChild pattern - merge props onto child element
+    if (asChild && React.isValidElement(children)) {
+      const child = children as React.ReactElement<any>;
+      return React.cloneElement(child, {
+        ref,
+        style: [buttonStyle, style, child.props.style],
+        onPress: child.props.onPress || onPress,
+        disabled: disabled || child.props.disabled,
+        accessibilityRole: 'button',
+        accessibilityLabel,
+        accessibilityState: { disabled },
+        ...rest,
+        ...child.props,
+      });
+    }
 
     return (
       <TouchableOpacity
@@ -192,13 +234,13 @@ const IconButton = React.forwardRef<React.ElementRef<typeof RnTouchableOpacity>,
       >
         {loading ? (
           <ActivityIndicator size="small" color={variantColors.iconColor} />
-        ) : React.isValidElement(icon) ? (
-          React.cloneElement(icon as React.ReactElement<any>, {
+        ) : React.isValidElement(children) ? (
+          React.cloneElement(children as React.ReactElement<any>, {
             size: sizeValues.iconSize,
             color: variantColors.iconColor,
           })
         ) : (
-          icon
+          children
         )}
       </TouchableOpacity>
     );

@@ -196,7 +196,7 @@ interface DropdownMenuTriggerIconProps {
   /**
    * Additional style for the button
    */
-  style?: StyleProp<ViewStyle>;
+  style?: ViewStyle;
 }
 
 export const DropdownMenuTriggerIcon = ({
@@ -221,7 +221,6 @@ export const DropdownMenuTriggerIcon = ({
   return (
     <IconButton
       ref={anchorRef as React.RefObject<React.ElementRef<typeof IconButton>>}
-      icon={icon || defaultIcon}
       variant={variant}
       color={color}
       size={size}
@@ -230,7 +229,9 @@ export const DropdownMenuTriggerIcon = ({
       accessibilityLabel={accessibilityLabel}
       highContrast={highContrast}
       style={style}
-    />
+    >
+      {icon || defaultIcon}
+    </IconButton>
   );
 };
 

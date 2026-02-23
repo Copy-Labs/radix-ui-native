@@ -77,11 +77,12 @@ export default function PopoverDemo() {
                     </Popover.Description>
                     <Popover.Close>
                       <IconButton
-                        icon={<LucideX size={14} />}
                         accessibilityLabel={''}
                         size={1}
                         variant={'soft'}
-                      />
+                      >
+                        <LucideX size={14} />
+                      </IconButton>
                     </Popover.Close>
                   </Popover.Content>
                 </Popover.Portal>

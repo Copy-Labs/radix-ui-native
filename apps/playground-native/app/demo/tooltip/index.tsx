@@ -42,18 +42,20 @@ export default function TooltipDemo() {
 
                 <Tooltip content="Settings menu">
                   <IconButton
-                    icon={<LucideSettings size={18} />}
                     accessibilityLabel="Settings"
                     variant="soft"
-                  />
+                  >
+                    <LucideSettings size={18} />
+                  </IconButton>
                 </Tooltip>
 
                 <Tooltip content="Search for items">
                   <IconButton
-                    icon={<LucideSearch size={18} />}
                     accessibilityLabel="Search"
                     variant="outline"
-                  />
+                  >
+                    <LucideSearch size={18} />
+                  </IconButton>
                 </Tooltip>
               </Flex>
             </Flex>
