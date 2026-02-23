@@ -177,10 +177,11 @@ export default function TextFields() {
                 <TextField.Slot side={'right'}>
                   <IconButton
                     accessibilityLabel={''}
-                    icon={<CrossIcon size={14} />}
                     size={1}
                     variant="solid"
-                  />
+                  >
+                    <CrossIcon size={14} />
+                  </IconButton>
                 </TextField.Slot>
               </TextField.Root>
             </Flex>
@@ -197,10 +198,11 @@ export default function TextFields() {
                 <TextField.Slot>
                   <IconButton
                     accessibilityLabel={'horizontal dot icon'}
-                    icon={<LucideEllipsis size={14} />}
                     size={1}
                     variant="soft"
-                  />
+                  >
+                    <LucideEllipsis size={14} />
+                  </IconButton>
                 </TextField.Slot>
               </TextField.Root>
             </Flex>
@@ -217,10 +219,11 @@ export default function TextFields() {
                 <TextField.Slot side="right">
                   <IconButton
                     accessibilityLabel={'cross icon'}
-                    icon={<CrossIcon size={14} />}
                     size={1}
                     variant="ghost"
-                  />
+                  >
+                    <CrossIcon size={14} />
+                  </IconButton>
                 </TextField.Slot>
               </TextField.Root>
             </Flex>

@@ -1,35 +1,99 @@
 import { Link } from 'expo-router';
-import { Box, Button, Flex, Heading, Text, ThemeProvider } from '@radix-ui/themes-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { Box, Button, Card, Flex, Heading, Text, ThemeProvider } from '@radix-ui/themes-native';
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useRoute } from '@react-navigation/core';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function App() {
+  const insets = useSafeAreaInsets();
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <ThemeProvider
         mode={'light'}
-        themeOptions={{ accentColor: 'blue', radius: 'medium', scaling: 1 }}
+        themeOptions={{ accentColor: 'indigo', radius: 'large', scaling: 1 }}
       >
-        <Box padding={8}>
-          <Heading align={'center'} size={5}>
-            Radix UI Native
+        <Flex direction={'column'} gap={4} paddingHorizontal={16} paddingVertical={16}>
+          <Heading align={'center'} size={7}>
+            Copy Native UI
           </Heading>
-          <Text align={'center'} size={4}>
-            Visit these places to Explore Radix UI Native
+          <Text color={'gray'} align={'center'} size={3}>
+            A React Native port of the popular Radix Themes component library.
           </Text>
-          <Flex direction={'column'} gap={12} padding={12}>
-            <Link asChild href={'/demo'}>
-              <Button size={3} variant={'soft'}>
-                All Components
-              </Button>
-            </Link>
-            <Link asChild href={'/profile'}>
-              <Button variant={'soft'}>Twitter Profile Demo</Button>
-            </Link>
-            <Link asChild href={'/tabs'}>
-              <Button size={1} variant={'soft'}>
-                Default Expo Project
-              </Button>
-            </Link>
+        </Flex>
+        <Flex
+          align={'center'}
+          bottom={insets.bottom + 8}
+          direction={'column'}
+          flex={1}
+          justify={'center'}
+          position={'absolute'}
+          width={'100%'}
+        >
+          <Text color={'gray'} align={'center'} size={3} weight={'light'}>
+            This app in entirely built using Copy Native UI
+          </Text>
+          <Text color={'gray'} weight={'light'}>
+            Copy &copy; {new Date().getFullYear()}
+          </Text>
+        </Flex>
+        <Box padding={16}>
+          {/*<Text align={'left'}>Visit these places to Explore Radix UI Native</Text>*/}
+          <Card radius={'large'} size={3}>
+            <Flex direction={'column'} gap={16} paddingTop={32}>
+              <Text color={'gray'} size={8} weight={'light'}>
+                Components
+              </Text>
+              <Text color={'gray'}>
+                View all 40+ available components here and how to use them.
+              </Text>
+              <Link asChild href={'/demo'}>
+                <Button size={3} variant={'solid'}>
+                  All Components
+                  <Button.Icon>
+                    <Ionicons name={'arrow-forward'} />
+                  </Button.Icon>
+                </Button>
+              </Link>
+            </Flex>
+          </Card>
+          <Flex direction={'column'} gap={12} paddingVertical={12}>
+            <Card radius={'large'} size={3}>
+              <Flex direction={'column'} gap={16}>
+                <Text color={'gray'} size={5} weight={'regular'}>
+                  Twitter Profile Demo Example
+                </Text>
+                <Text color={'gray'}>
+                  Check out a twitter profile demo built using Copy Native UI.
+                </Text>
+                <Link asChild href={'/profile'}>
+                  <Button variant={'ghost'}>
+                    Twitter Profile Demo
+                    <Button.Icon>
+                      <Ionicons name={'arrow-forward'} />
+                    </Button.Icon>
+                  </Button>
+                </Link>
+              </Flex>
+            </Card>
+            <Card radius={'large'} size={3}>
+              <Flex direction={'column'} gap={16}>
+                <Text color={'gray'} size={5} weight={'regular'}>
+                  Default Expo Project Example
+                </Text>
+                <Text color={'gray'}>
+                  Visit the default Expo project example.
+                </Text>
+                <Link asChild href={'/tabs'}>
+                  <Button variant={'ghost'}>
+                    Default Expo Project
+                    <Button.Icon>
+                      <Ionicons name={'arrow-forward'} />
+                    </Button.Icon>
+                  </Button>
+                </Link>
+              </Flex>
+            </Card>
           </Flex>
         </Box>
       </ThemeProvider>

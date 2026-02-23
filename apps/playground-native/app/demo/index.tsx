@@ -30,15 +30,12 @@ export default function App() {
     <ScrollView style={{ flex: 1 }}>
       {/*<SafeAreaView>*/}
       <ThemeProvider mode={'light'} themeOptions={{ accentColor: 'blue', scaling: 1 }}>
-        <Flex direction={'column'} gap={4} paddingVertical={16}>
-          <Text align={'center'} size={8} weight={'bold'}>
-            Radix-UI Native
-          </Text>
+        <Flex direction={'column'} gap={4} paddingHorizontal={16} paddingVertical={16}>
+          <Heading align={'center'} size={7}>
+            Copy Native UI Playground
+          </Heading>
           <Text color={'gray'} align={'center'} size={4}>
-            Playground App for Testing Components
-          </Text>
-          <Text color={'ruby'} align={'center'} size={3}>
-            All you see in this app is built using Radix-UI Native
+            Check out all Copy Native UI Components here
           </Text>
         </Flex>
         <Flex direction={'column'} gap={16} paddingHorizontal={8}>
@@ -48,9 +45,6 @@ export default function App() {
           <Link href={'/demo/accordion'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Accordion</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/aspect_ratio'}>
@@ -68,9 +62,6 @@ export default function App() {
           <Link href={'/demo/callout'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Callout</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/card'}>
@@ -82,9 +73,6 @@ export default function App() {
           <Link href={'/demo/checkbox_cards'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Checkbox Cards</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/dialog'}>
@@ -99,9 +87,6 @@ export default function App() {
           <Link href={'/demo/radio_cards'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Radio Cards</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/text_fields'}>
@@ -137,81 +122,51 @@ export default function App() {
           <Link href={'/demo/popover'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Popover</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/dropdown_menu'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>DropdownMenu</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/select'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Select</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/slider'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Slider</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/spinner'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Spinner</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/progress'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Progress</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/tooltip'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Tooltip</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/context_menu'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Context Menu</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/datalist'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>DataList</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/inset'}>
             <Flex align={'center'} gap={8}>
               <Text size={4}>Inset</Text>
-              <Badge color={'ruby'} radius={'full'} size={2} variant={'solid'}>
-                New
-              </Badge>
             </Flex>
           </Link>
           <Link href={'/demo/toast'}>

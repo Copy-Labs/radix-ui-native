@@ -3,7 +3,7 @@ import { type TextStyle, Text as RNText } from 'react-native';
 import { Slot } from '../../components';
 import { PrimitiveText as RnText } from '../primitives';
 import { useTheme, useThemeMode } from '../../hooks/useTheme';
-import { Color } from '@/theme';
+import { Color } from '../../theme';
 
 interface TextProps {
   /**
@@ -137,6 +137,7 @@ const TextComponent = React.memo(
           : numberOfLines
         : numberOfLines;
 
+      console.log("fontSize", fontSizes, size, children)
       const textStyle: TextStyle = useMemo(
         () => ({
           fontSize: fontSizes.fontSize,

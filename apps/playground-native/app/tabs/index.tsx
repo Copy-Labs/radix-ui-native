@@ -44,7 +44,7 @@ export default function HomeScreen() {
     >
       <ThemeProvider
         mode={'light'}
-        themeOptions={{ accentColor: 'grass', radiusFactor: 2, scaling: 0.9 }}
+        themeOptions={{ accentColor: 'grass', scaling: 0.9 }}
       >
         <SafeAreaView style={{ flex: 1, gap: 16 }}>
           <Flex direction={'column'} gap={16} paddingVertical={4} backgroundColor="gray.2">
@@ -189,18 +189,6 @@ export default function HomeScreen() {
               checked={checked}
               size={'3'}
               onCheckedChange={(checked: boolean) => setChecked(checked)}
-            />
-
-            <Select
-              disabled={false}
-              placeholder={"Select a select"}
-              size={'3'}
-              value={radioValue}
-              onValueChange={setRadioValue}
-              items={[
-                { value: 'option1', label: 'Option 1' },
-                { value: 'option2', label: 'Option 2' },
-              ]}
             />
 
             {/*<Slider value={sliderValue} onValueChange={setSliderValue} />*/}
