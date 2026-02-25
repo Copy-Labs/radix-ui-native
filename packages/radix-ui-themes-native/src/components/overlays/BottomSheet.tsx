@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useRef,
   useEffect,
+  useMemo,
   type ReactNode,
 } from 'react';
 import {
@@ -14,11 +15,14 @@ import {
   StyleSheet,
   Animated,
   Dimensions,
+  PanResponder,
   type StyleProp,
   ViewStyle,
   Pressable,
   ScrollView,
   Platform,
+  type GestureResponderHandlers,
+  TouchableOpacity,
 } from 'react-native';
 import { useTheme, useThemeMode } from '../../hooks/useTheme';
 import { Text } from '../typography';
@@ -49,6 +53,12 @@ interface BottomSheetContextValue {
   snapPoints: SnapPoint[];
   currentSnapIndex: number;
   onSnapChange: (index: number) => void;
+  // Animation and gesture state (shared between Handle and Content)
+  translateY: Animated.Value;
+  snapHeights: number[];
+  targetSnapHeight: number;
+  screenHeight: number;
+  panHandlers: GestureResponderHandlers;
 }
 
 const BottomSheetContext = createContext<BottomSheetContextValue | null>(null);
@@ -132,6 +142,25 @@ export const BottomSheetRoot = ({
   const [currentSnapIndex, setCurrentSnapIndex] = useState(defaultSnapPoint);
   const open = controlledOpen !== undefined ? controlledOpen : internalOpen;
 
+  const { height: screenHeight } = Dimensions.get('window');
+
+  // Calculate snap heights
+  const snapHeights = useMemo(
+    () => snapPoints.map((sp) => parseSnapPoint(sp, screenHeight)),
+    [snapPoints, screenHeight]
+  );
+
+  // Get the target height for the current snap point
+  const targetSnapHeight = snapHeights[currentSnapIndex] || snapHeights[0];
+
+  // Animation value - shared across components
+  const translateY = useRef(new Animated.Value(targetSnapHeight)).current;
+
+  // Swipe state refs
+  const swipeDistance = useRef(0);
+  const isSwiping = useRef(false);
+  const startY = useRef(0);
+
   const handleOpenChange = useCallback(
     (newOpen: boolean) => {
       if (controlledOpen === undefined) {
@@ -145,6 +174,127 @@ export const BottomSheetRoot = ({
   const handleSnapChange = useCallback((index: number) => {
     setCurrentSnapIndex(index);
   }, []);
+
+  // Animate to a specific snap point
+  const animateToSnapPoint = useCallback(
+    (index: number, animated: boolean = true) => {
+      const targetHeight = snapHeights[index];
+      if (animated) {
+        Animated.spring(translateY, {
+          toValue: 0,
+          useNativeDriver: true,
+          tension: 65,
+          friction: 11,
+        }).start();
+      } else {
+        translateY.setValue(0);
+      }
+    },
+    [translateY, snapHeights]
+  );
+
+  // Close animation
+  const animateClose = useCallback(() => {
+    Animated.timing(translateY, {
+      toValue: targetSnapHeight,
+      duration: ANIMATION_DURATION,
+      useNativeDriver: true,
+    }).start(() => {
+      handleOpenChange(false);
+    });
+  }, [translateY, targetSnapHeight, handleOpenChange]);
+
+  // Find the nearest snap point based on drag position
+  const findNearestSnapPoint = useCallback(
+    (dragDistance: number) => {
+      // Current position = targetSnapHeight - dragDistance
+      // But since we're using translateY from 0 (open), dragDistance is how much we've dragged down
+      // The visible height is targetSnapHeight - dragDistance
+      const currentVisibleHeight = targetSnapHeight - dragDistance;
+
+      // Find the closest snap height
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+
+      snapHeights.forEach((height, index) => {
+        const distance = Math.abs(height - currentVisibleHeight);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = index;
+        }
+      });
+
+      return closestIndex;
+    },
+    [targetSnapHeight, snapHeights]
+  );
+
+  // Pan responder for swipe/drag gestures - shared between Handle and Content
+  const panResponder = useMemo(() => {
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => false,
+      onMoveShouldSetPanResponder: (_, gestureState) => {
+        // Only respond to vertical swipes DOWN (positive dy)
+        return (
+          gestureState.dy > 10 &&
+          Math.abs(gestureState.dy) > Math.abs(gestureState.dx)
+        );
+      },
+      onPanResponderGrant: () => {
+        startY.current = 0;
+        isSwiping.current = true;
+      },
+      onPanResponderMove: (_, gestureState) => {
+        // Only allow swipe DOWN (positive dy)
+        if (gestureState.dy > 0) {
+          isSwiping.current = true;
+          swipeDistance.current = gestureState.dy;
+          translateY.setValue(gestureState.dy);
+        }
+      },
+      onPanResponderRelease: (_, gestureState) => {
+        const threshold = 100; // Minimum distance to trigger close
+        const velocityThreshold = 500; // Velocity threshold for quick swipes
+
+        // Only close if swiped DOWN with enough distance or velocity
+        if (gestureState.dy > threshold || gestureState.vy > velocityThreshold / 1000) {
+          // Animate to closed position
+          Animated.timing(translateY, {
+            toValue: targetSnapHeight,
+            duration: 200,
+            useNativeDriver: true,
+          }).start(() => {
+            handleOpenChange(false);
+          });
+        } else {
+          // Snap back to open position
+          Animated.spring(translateY, {
+            toValue: 0,
+            tension: 65,
+            friction: 11,
+            useNativeDriver: true,
+          }).start();
+        }
+        isSwiping.current = false;
+      },
+    });
+  }, [
+    translateY,
+    targetSnapHeight,
+    handleOpenChange,
+  ]);
+
+  // Reset animation when opening
+  useEffect(() => {
+    if (open) {
+      translateY.setValue(targetSnapHeight);
+      // Animate open after a small delay
+      const timer = setTimeout(() => {
+        animateToSnapPoint(currentSnapIndex);
+      }, 50);
+      return () => clearTimeout(timer);
+    }
+  }, [open]);
 
   const theme = useTheme();
   const mode = useThemeMode();
@@ -164,6 +314,11 @@ export const BottomSheetRoot = ({
         snapPoints,
         currentSnapIndex,
         onSnapChange: handleSnapChange,
+        translateY,
+        snapHeights,
+        targetSnapHeight,
+        screenHeight,
+        panHandlers: panResponder.panHandlers,
       }}
     >
       {children}
@@ -267,7 +422,7 @@ export const BottomSheetOverlay = ({ style }: BottomSheetOverlayProps) => {
 };
 
 // ============================================================================
-// BottomSheet.Handle - Visual drag handle at the top
+// BottomSheet.Handle - Visual drag handle at the top with gesture support
 // ============================================================================
 
 interface BottomSheetHandleProps {
@@ -275,16 +430,17 @@ interface BottomSheetHandleProps {
 }
 
 export const BottomSheetHandle = ({ style }: BottomSheetHandleProps) => {
+  const { panHandlers } = useBottomSheet();
   const theme = useTheme();
   const mode = useThemeMode();
   const isDark = mode === 'dark';
 
   const handleColor = isDark
-    ? 'rgba(255, 255, 255, 0.2)'
-    : 'rgba(0, 0, 0, 0.1)';
+    ? theme.colors.gray.dark[8]
+    : theme.colors.gray[8];
 
   return (
-    <View style={styles.handleContainer}>
+    <Pressable style={styles.handleContainer} {...panHandlers}>
       <View
         style={[
           styles.handle,
@@ -294,7 +450,7 @@ export const BottomSheetHandle = ({ style }: BottomSheetHandleProps) => {
           style,
         ]}
       />
-    </View>
+    </Pressable>
   );
 };
 
@@ -317,66 +473,22 @@ export const BottomSheetContent = ({
   size = 2,
   hideHandle = false,
 }: BottomSheetContentProps) => {
-  const { onOpenChange, radii, snapPoints: contextSnapPoints, currentSnapIndex } =
+  const { radii, snapPoints: contextSnapPoints, currentSnapIndex, translateY, snapHeights, panHandlers } =
     useBottomSheet();
   const theme = useTheme();
   const mode = useThemeMode();
   const isDark = mode === 'dark';
 
-  const { height: screenHeight } = Dimensions.get('window');
   const effectiveSnapPoints = localSnapPoints || contextSnapPoints;
-
-  // Calculate snap heights first (before any animation)
-  const snapHeights = effectiveSnapPoints.map((sp) =>
-    parseSnapPoint(sp, screenHeight)
-  );
 
   // Get the target height for the current snap point
   const targetSnapHeight = snapHeights[currentSnapIndex] || snapHeights[0];
-
-  // Animation value - starts at targetSnapHeight (off-screen below)
-  // We use targetSnapHeight so the content is just below the visible area
-  const translateY = useRef(new Animated.Value(targetSnapHeight)).current;
 
   // Get size-specific styles
   const sizeStyles = getSizeStyles(size, theme.space, radii);
 
   // Get shadow for current theme mode
   const shadow = getShadow(6, isDark);
-
-  // Animate to snap point (slide up from bottom)
-  const animateToSnapPoint = useCallback(
-    (index: number) => {
-      // Animate to 0 to bring content to bottom of screen (visible)
-      Animated.spring(translateY, {
-        toValue: 0,
-        useNativeDriver: true,
-        tension: 65,
-        friction: 11,
-      }).start();
-    },
-    [translateY]
-  );
-
-  // Animate open when component mounts
-  useEffect(() => {
-    // Small delay to ensure the modal is visible before animating
-    const timer = setTimeout(() => {
-      animateToSnapPoint(currentSnapIndex);
-    }, 50);
-    return () => clearTimeout(timer);
-  }, [currentSnapIndex, animateToSnapPoint]);
-
-  // Handle close animation
-  const handleClose = () => {
-    Animated.timing(translateY, {
-      toValue: targetSnapHeight,
-      duration: ANIMATION_DURATION,
-      useNativeDriver: true,
-    }).start(() => {
-      onOpenChange(false);
-    });
-  };
 
   // Background color
   const backgroundColor = isDark ? theme.colors.gray.dark[2] : '#ffffff';
@@ -386,36 +498,36 @@ export const BottomSheetContent = ({
   const borderTopRightRadius = radii.large;
 
   return (
-    <TouchableWithoutFeedback onPress={() => {}}>
-      <Animated.View
-        style={[
-          styles.content,
-          {
-            backgroundColor,
-            borderTopLeftRadius,
-            borderTopRightRadius,
-            paddingHorizontal: sizeStyles.paddingHorizontal,
-            height: targetSnapHeight,
-            transform: [{ translateY }],
-            ...(shadow || {}),
-          },
-          style,
-        ]}
-      >
-        {/* Drag Handle */}
-        {!hideHandle && <BottomSheetHandle />}
+    <Animated.View
+      style={[
+        styles.content,
+        {
+          backgroundColor,
+          borderTopLeftRadius,
+          borderTopRightRadius,
+          flex: 1,
+          paddingHorizontal: sizeStyles.paddingHorizontal,
+          height: targetSnapHeight,
+          transform: [{ translateY }],
+          ...(shadow || {}),
+        },
+        style,
+      ]}
+      {...panHandlers}
+    >
+      {/* Drag Handle */}
+      {!hideHandle && <BottomSheetHandle />}
 
-        {/* Content */}
-        <ScrollView
-          style={styles.scrollContent}
-          contentContainerStyle={styles.scrollContentContainer}
-          showsVerticalScrollIndicator={true}
-          bounces={true}
-        >
-          {children}
-        </ScrollView>
-      </Animated.View>
-    </TouchableWithoutFeedback>
+      {/* Content */}
+      <ScrollView
+        style={styles.scrollContent}
+        contentContainerStyle={styles.scrollContentContainer}
+        showsVerticalScrollIndicator={true}
+        bounces={true}
+      >
+        {children}
+      </ScrollView>
+    </Animated.View>
   );
 };
 
